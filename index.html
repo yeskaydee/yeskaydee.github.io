@@ -1,9 +1,979 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-yeskaydee
-</head
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santosh Kumar Doodala — CloudOps Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1A1816;
+    --card: #2B2622;
+    --primary: #FF7B00;
+    --hover: #FF9E40;
+    --accent: #FFB86B;
+    --text: #FAFAFA;
+    --muted: #B8B0A8;
+    --border: rgba(255,123,0,0.15);
+    --border-bright: rgba(255,123,0,0.35);
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Space Grotesk', sans-serif;
+  }
+ 
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+ 
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    cursor: none;
+  }
+ 
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: transform 0.1s;
+  }
+  .cursor-ring {
+    width: 32px; height: 32px;
+    border: 1px solid rgba(255,123,0,0.45);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: transform 0.15s;
+  }
+ 
+  .grid-bg {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,123,0,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,123,0,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+ 
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 4rem;
+    background: rgba(26,24,22,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--primary);
+    letter-spacing: 0.05em;
+  }
+  .nav-logo span { color: var(--muted); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--primary); }
+ 
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative; z-index: 1;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .hero-content { max-width: 760px; }
+ 
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--primary);
+    background: rgba(255,123,0,0.08);
+    border: 1px solid rgba(255,123,0,0.22);
+    padding: 0.35rem 0.9rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--hover);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.35} }
+ 
+  .hero-name {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero-name .first { color: var(--text); }
+  .hero-name .last {
+    color: transparent;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+ 
+  .hero-title {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    letter-spacing: 0.04em;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-title .accent { color: var(--accent); }
+ 
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+ 
+  .hero-certs {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.6s 0.35s ease both;
+  }
+  .cert-badge {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--accent);
+    background: rgba(255,184,107,0.08);
+    border: 1px solid rgba(255,184,107,0.22);
+    padding: 0.3rem 0.7rem;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+  }
+ 
+  .hero-actions {
+    display: flex; gap: 1rem;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: #1A1816;
+    background: var(--primary);
+    padding: 0.8rem 2rem;
+    border: none; cursor: none;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--hover); transform: translateY(-2px); }
+  .btn-ghost {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+    background: transparent;
+    padding: 0.8rem 2rem;
+    border: 1px solid rgba(255,123,0,0.3);
+    cursor: none;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--primary); background: rgba(255,123,0,0.07); }
+ 
+  .hero-visual {
+    position: absolute;
+    right: 4rem; top: 50%;
+    transform: translateY(-50%);
+    width: 420px;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+ 
+  section {
+    position: relative; z-index: 1;
+    max-width: 1200px; margin: 0 auto;
+    padding: 6rem 4rem;
+  }
+ 
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--primary);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after {
+    content: '';
+    height: 1px; width: 40px;
+    background: var(--primary);
+    opacity: 0.4;
+    display: inline-block;
+  }
+  .section-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 3.5rem;
+    color: var(--text);
+  }
+ 
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+ 
+  .divider { max-width: 1200px; margin: 0 auto; padding: 0 4rem; }
+  .divider hr { border: none; border-top: 1px solid var(--border); }
+ 
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 2px; }
+  .timeline-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .timeline-item.visible { opacity: 1; transform: translateY(0); }
+  .timeline-period {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+  .timeline-company {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .timeline-role {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+  .timeline-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+  .timeline-bullets li {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+  .timeline-bullets li::before {
+    content: '›';
+    position: absolute; left: 0;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .timeline-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem; }
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--primary);
+    background: rgba(255,123,0,0.08);
+    border: 1px solid rgba(255,123,0,0.18);
+    padding: 0.2rem 0.55rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+  }
+ 
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .skill-card {
+    background: var(--card);
+    padding: 2rem;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.4s, background 0.2s;
+  }
+  .skill-card.visible { opacity: 1; transform: translateY(0); }
+  .skill-card:hover { background: #332E29; }
+  .skill-icon { width: 40px; height: 40px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; }
+  .skill-icon svg { width: 32px; height: 32px; }
+  .skill-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+  .skill-items {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.8;
+    letter-spacing: 0.02em;
+  }
+ 
+  /* Highlights */
+  .highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .highlight-card {
+    background: var(--card);
+    padding: 2.5rem;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.4s, background 0.2s;
+  }
+  .highlight-card.visible { opacity: 1; transform: translateY(0); }
+  .highlight-card:hover { background: #332E29; }
+  .highlight-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .highlight-card:hover::before { opacity: 1; }
+  .highlight-number {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+  }
+  .highlight-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.85rem;
+    line-height: 1.35;
+  }
+  .highlight-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+  .highlight-impact {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--hover);
+    letter-spacing: 0.05em;
+  }
+ 
+  /* Certs */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .cert-card {
+    background: var(--card);
+    padding: 2rem;
+    display: flex; flex-direction: column; gap: 1rem;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.4s, background 0.2s;
+  }
+  .cert-card.visible { opacity: 1; transform: translateY(0); }
+  .cert-card:hover { background: #332E29; }
+  .cert-logo { width: 48px; height: 48px; }
+  .cert-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .cert-issuer {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+ 
+  /* Terminal */
+  .terminal {
+    background: #110F0D;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 3rem 0;
+  }
+  .terminal-header {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.8rem 1.2rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #EA4335; }
+  .dot-yellow { background: #FBBC04; }
+  .dot-green { background: #34A853; }
+  .terminal-title {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-left: 0.5rem;
+  }
+  .terminal-body {
+    padding: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 2;
+  }
+  .t-comment { color: #4a3d30; }
+  .t-prompt { color: var(--hover); }
+  .t-cmd { color: var(--text); }
+  .t-flag { color: var(--primary); }
+  .t-val { color: var(--accent); }
+  .t-out { color: var(--muted); }
+  .t-success { color: var(--hover); }
+ 
+  /* Contact */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5px;
+    background: var(--border);
+  }
+  .contact-item {
+    background: var(--card);
+    padding: 2rem;
+    text-decoration: none;
+    display: block;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.4s, transform 0.4s, background 0.2s;
+  }
+  .contact-item.visible { opacity: 1; transform: translateY(0); }
+  .contact-item:hover { background: #332E29; cursor: none; }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+  .contact-value {
+    font-size: 0.9rem;
+    color: var(--primary);
+    font-weight: 500;
+  }
+ 
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 2rem 4rem;
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .footer-gcp {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+ 
+  .arch-svg { width: 100%; }
+ 
+  .reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .reveal.visible { opacity: 1; transform: none; }
+ 
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.5rem 4rem; }
+    section { padding: 4rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; padding: 2rem 1.5rem; }
+    .hero-visual { display: none; }
+    .timeline-item { grid-template-columns: 1fr; gap: 0.5rem; }
+  }
+ 
+  /* Logo strip */
+  .logos-track {
+    display: flex; align-items: center; gap: 2rem;
+    width: max-content;
+    animation: marquee 30s linear infinite;
+    padding: 0 2rem;
+  }
+  .logos-track:hover { animation-play-state: paused; }
+  .logo-pill {
+    display: flex; align-items: center; gap: 0.6rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: rgba(43,38,34,0.85);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .logo-pill:hover { border-color: rgba(255,123,0,0.4); color: var(--text); }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+</style>
+</head>
 <body>
-Owned by yeskaydee
+ 
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+<div class="grid-bg"></div>
+ 
+<nav>
+  <div class="nav-logo">Santosh Kumar Doodala <span>/ CloudOps Engineer</span></div>
+  <ul class="nav-links">
+    <li><a href="#experience">experience</a></li>
+    <li><a href="#highlights">highlights</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#certifications">certifications</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+ 
+<div style="position:relative;z-index:1;">
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      AVAILABLE FOR VOLUNTEERING IN SCIENCE AND TECHNOLOGY
+    </div>
+    <h1 class="hero-name">
+      <span class="first">Santosh Kumar</span><br>
+      <span class="last">Doodala</span>
+    </h1>
+    <p class="hero-title">
+      CloudOps Engineer &nbsp;·&nbsp;
+      <span class="accent">Google Cloud Platform</span> &nbsp;·&nbsp; Terraform &nbsp;·&nbsp; DevOps
+    </p>
+    <p class="hero-desc">
+      Building resilient, secure, and scalable cloud infrastructure on GCP. Specializing in Infrastructure as Code, CI/CD automation, cloud governance, and SOC 2 compliant environments across production-grade deployments.
+    </p>
+    <div class="hero-certs">
+      <span class="cert-badge">
+        <svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="5" stroke="#FFB86B" stroke-width="1.2"/><path d="M3.5 6l2 2 3-3" stroke="#FFB86B" stroke-width="1.2" stroke-linecap="round"/></svg>
+        GCP PROFESSIONAL ARCHITECT
+      </span>
+      <span class="cert-badge">
+        <svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="5" stroke="#FFB86B" stroke-width="1.2"/><path d="M3.5 6l2 2 3-3" stroke="#FFB86B" stroke-width="1.2" stroke-linecap="round"/></svg>
+        PROFESSIONAL DEVOPS ENGINEER
+      </span>
+      <span class="cert-badge">
+        <svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="5" stroke="#FFB86B" stroke-width="1.2"/><path d="M3.5 6l2 2 3-3" stroke="#FFB86B" stroke-width="1.2" stroke-linecap="round"/></svg>
+        ASSOCIATE CLOUD ENGINEER
+      </span>
+      <span class="cert-badge">
+        <svg viewBox="0 0 12 12" fill="none" width="12" height="12"><circle cx="6" cy="6" r="5" stroke="#FFB86B" stroke-width="1.2"/><path d="M3.5 6l2 2 3-3" stroke="#FFB86B" stroke-width="1.2" stroke-linecap="round"/></svg>
+        CLOUD DIGITAL LEADER
+      </span>
+    </div>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Get In Touch</a>
+      <a href="#experience" class="btn-ghost">View Experience</a>
+    </div>
+  </div>
+ 
+  <div class="hero-visual">
+    <svg class="arch-svg" viewBox="0 0 420 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="210" cy="320" rx="160" ry="30" fill="#FF7B00" fill-opacity="0.05"/>
+ 
+      <rect x="155" y="155" width="110" height="70" rx="4" fill="#2B2622" stroke="#FF7B00" stroke-width="1.5"/>
+      <text x="210" y="184" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="9" letter-spacing="2">GOOGLE</text>
+      <text x="210" y="198" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="9" letter-spacing="2">CLOUD</text>
+      <text x="210" y="212" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="8" letter-spacing="1" opacity="0.55">PLATFORM</text>
+ 
+      <rect x="30" y="60" width="90" height="50" rx="3" fill="#2B2622" stroke="#FFB86B" stroke-width="1"/>
+      <text x="75" y="80" text-anchor="middle" fill="#FFB86B" font-family="JetBrains Mono" font-size="8" letter-spacing="1">TERRAFORM</text>
+      <text x="75" y="98" text-anchor="middle" fill="#FFB86B" font-family="JetBrains Mono" font-size="7" opacity="0.65">IaC / HCL</text>
+      <path d="M120 85 L155 170" stroke="#FFB86B" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.45"/>
+ 
+      <rect x="300" y="60" width="100" height="50" rx="3" fill="#2B2622" stroke="#FF7B00" stroke-width="1"/>
+      <text x="350" y="79" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="7.5" letter-spacing="1">CLOUD BUILD</text>
+      <text x="350" y="97" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="7" opacity="0.6">CI/CD</text>
+      <path d="M300 85 L265 167" stroke="#FF7B00" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.45"/>
+ 
+      <rect x="30" y="200" width="90" height="50" rx="3" fill="#2B2622" stroke="#FF9E40" stroke-width="1"/>
+      <text x="75" y="220" text-anchor="middle" fill="#FF9E40" font-family="JetBrains Mono" font-size="8" letter-spacing="1">GKE</text>
+      <text x="75" y="238" text-anchor="middle" fill="#FF9E40" font-family="JetBrains Mono" font-size="7" opacity="0.65">KUBERNETES</text>
+      <path d="M120 215 L155 195" stroke="#FF9E40" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.45"/>
+ 
+      <rect x="300" y="200" width="100" height="50" rx="3" fill="#2B2622" stroke="#FFB86B" stroke-width="1"/>
+      <text x="350" y="220" text-anchor="middle" fill="#FFB86B" font-family="JetBrains Mono" font-size="8" letter-spacing="1">CHECKOV</text>
+      <text x="350" y="238" text-anchor="middle" fill="#FFB86B" font-family="JetBrains Mono" font-size="7" opacity="0.65">GOVERNANCE</text>
+      <path d="M300 220 L265 200" stroke="#FFB86B" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.45"/>
+ 
+      <rect x="155" y="290" width="110" height="50" rx="3" fill="#2B2622" stroke="#FF9E40" stroke-width="1"/>
+      <text x="210" y="309" text-anchor="middle" fill="#FF9E40" font-family="JetBrains Mono" font-size="7.5" letter-spacing="1">MONITORING</text>
+      <text x="210" y="327" text-anchor="middle" fill="#FF9E40" font-family="JetBrains Mono" font-size="7" opacity="0.65">NAGIOS / OPS</text>
+      <path d="M210 290 L210 225" stroke="#FF9E40" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.45"/>
+ 
+      <rect x="160" y="30" width="100" height="44" rx="3" fill="#2B2622" stroke="#FF7B00" stroke-width="1"/>
+      <text x="210" y="49" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="8" letter-spacing="1">SOC 2</text>
+      <text x="210" y="66" text-anchor="middle" fill="#FF7B00" font-family="JetBrains Mono" font-size="7" opacity="0.6">COMPLIANCE</text>
+      <path d="M210 74 L210 155" stroke="#FF7B00" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.45"/>
+ 
+      <circle cx="210" cy="155" r="2.5" fill="#FF7B00" opacity="0.85">
+        <animateTransform attributeName="transform" type="rotate" from="0 210 190" to="360 210 190" dur="8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="210" cy="225" r="2" fill="#FFB86B" opacity="0.65">
+        <animateTransform attributeName="transform" type="rotate" from="180 210 190" to="540 210 190" dur="8s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+</div>
+</div>
+ 
+<!-- LOGO STRIP -->
+<div style="position:relative;z-index:1;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:1.2rem 0;background:rgba(43,38,34,0.55);">
+  <div class="logos-track">
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17.6 6.4l-2-2-3.6 6.2 2 2L17.6 6.4z" fill="#FF7B00"/><path d="M6.4 6.4l2-2 3.6 6.2-2 2L6.4 6.4z" fill="#FF9E40"/><path d="M12 20c-3.2 0-5.9-1.9-7.3-4.6L7.3 14H16.7l2.6 1.4C17.9 18.1 15.2 20 12 20z" fill="#FFB86B"/><path d="M7.3 14l-2.6 1.4A9.97 9.97 0 0 1 4 12c0-1.6.38-3.1 1.05-4.4L7.3 10v4z" fill="#FF7B00" opacity="0.7"/></svg><span>Google Cloud</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 3.6 L15 7.2 V14.4 L9 10.8 V3.6Z" fill="#FF9E40" fill-opacity="0.8"/><path d="M15.8 7.6 L21 10.8 V17.6 L15.8 14.4 V7.6Z" fill="#FF9E40" fill-opacity="0.5"/><path d="M3 7.6 L8.2 10.8 V17.6 L3 14.4 V7.6Z" fill="#FF9E40" fill-opacity="0.3"/><path d="M9 13.2 L15 16.8 V20.4 L9 16.8 V13.2Z" fill="#FF9E40" fill-opacity="0.6"/></svg><span>Terraform</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L21.5 7.5V16.5L12 22L2.5 16.5V7.5L12 2Z" fill="#FF7B00" fill-opacity="0.12" stroke="#FF7B00" stroke-width="1"/><circle cx="12" cy="12" r="2.5" fill="#FF7B00"/><path d="M12 5 V9.5M12 14.5 V19M5 8.5 L8.9 10.8M15.1 13.2 L19 15.5M5 15.5 L8.9 13.2M15.1 10.8 L19 8.5" stroke="#FF7B00" stroke-width="1.2" stroke-linecap="round"/></svg><span>Kubernetes</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="10" width="20" height="8" rx="2" fill="#FFB86B" fill-opacity="0.1" stroke="#FFB86B" stroke-width="1"/><rect x="5" y="7" width="3" height="3" rx="0.5" fill="#FFB86B" fill-opacity="0.5" stroke="#FFB86B" stroke-width="0.8"/><rect x="9.5" y="7" width="3" height="3" rx="0.5" fill="#FFB86B" fill-opacity="0.5" stroke="#FFB86B" stroke-width="0.8"/><rect x="14" y="7" width="3" height="3" rx="0.5" fill="#FFB86B" fill-opacity="0.5" stroke="#FFB86B" stroke-width="0.8"/></svg><span>Docker</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.5 2 7 3.8 7 6V9H13V10H4.5C2.5 10 1 11.5 1 14C1 16.5 2.5 18 4.5 18H6V15.5C6 13 7.5 12 10 12H14C16.5 12 17 10.5 17 9V6C17 3.8 15.5 2 12 2Z" fill="#FF9E40" fill-opacity="0.2" stroke="#FF9E40" stroke-width="0.9"/><path d="M12 22C15.5 22 17 20.2 17 18V15H11V14H19.5C21.5 14 23 12.5 23 10C23 7.5 21.5 6 19.5 6H18V8.5C18 11 16.5 12 14 12H10C7.5 12 7 13.5 7 15V18C7 20.2 8.5 22 12 22Z" fill="#FFB86B" fill-opacity="0.2" stroke="#FFB86B" stroke-width="0.9"/></svg><span>Python</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" fill="#FF7B00" fill-opacity="0.1" stroke="#FF7B00" stroke-width="1" stroke-linejoin="round"/><path d="M8 12L12 21L16 12" fill="#FF9E40" fill-opacity="0.15"/></svg><span>GitLab</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L22 7V17L12 22L2 17V7L12 2Z" fill="#FFB86B" fill-opacity="0.1" stroke="#FFB86B" stroke-width="1"/><path d="M8 12l3 3 5-6" stroke="#FFB86B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checkov</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#FF7B00" fill-opacity="0.1" stroke="#FF7B00" stroke-width="1"/><path d="M8 18 L14 6 L18 16 L13 11" stroke="#FF7B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Ansible</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polyline points="2,17 6,11 10,14 14,8 18,12 22,6" stroke="#FF9E40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="11" r="1.2" fill="#FF9E40"/><circle cx="14" cy="8" r="1.2" fill="#FF9E40"/></svg><span>Nagios</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 14 Q4 20 12 20 Q20 20 20 14 Q20 8 14 8 Q14 4 10 4 Q6 4 6 8 Q4 8 4 14Z" fill="#FF7B00" fill-opacity="0.1" stroke="#FF7B00" stroke-width="1"/><path d="M10 14 l2 2 4-4" stroke="#FF7B00" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Cloud Build</span></div>
+    <!-- duplicates for loop -->
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M17.6 6.4l-2-2-3.6 6.2 2 2L17.6 6.4z" fill="#FF7B00"/><path d="M6.4 6.4l2-2 3.6 6.2-2 2L6.4 6.4z" fill="#FF9E40"/><path d="M12 20c-3.2 0-5.9-1.9-7.3-4.6L7.3 14H16.7l2.6 1.4C17.9 18.1 15.2 20 12 20z" fill="#FFB86B"/></svg><span>Google Cloud</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 3.6 L15 7.2 V14.4 L9 10.8 V3.6Z" fill="#FF9E40" fill-opacity="0.8"/><path d="M15.8 7.6 L21 10.8 V17.6 L15.8 14.4 V7.6Z" fill="#FF9E40" fill-opacity="0.5"/><path d="M3 7.6 L8.2 10.8 V17.6 L3 14.4 V7.6Z" fill="#FF9E40" fill-opacity="0.3"/></svg><span>Terraform</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L21.5 7.5V16.5L12 22L2.5 16.5V7.5L12 2Z" fill="#FF7B00" fill-opacity="0.12" stroke="#FF7B00" stroke-width="1"/><circle cx="12" cy="12" r="2.5" fill="#FF7B00"/></svg><span>Kubernetes</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="#FF7B00" fill-opacity="0.1" stroke="#FF7B00" stroke-width="1"/><path d="M8 18 L14 6 L18 16 L13 11" stroke="#FF7B00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Ansible</span></div>
+    <div class="logo-pill"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polyline points="2,17 6,11 10,14 14,8 18,12 22,6" stroke="#FF9E40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Nagios</span></div>
+  </div>
+</div>
+ 
+<!-- TERMINAL -->
+<div class="divider"><hr></div>
+<div style="max-width:1200px;margin:0 auto;padding:3rem 4rem 0;">
+  <div class="terminal reveal">
+    <div class="terminal-header">
+      <div class="dot dot-red"></div>
+      <div class="dot dot-yellow"></div>
+      <div class="dot dot-green"></div>
+      <span class="terminal-title">gcloud — bash</span>
+    </div>
+    <div class="terminal-body">
+      <div class="t-comment"># CloudOps Engineer — Rappit</div>
+      <div><span class="t-prompt">$</span> <span class="t-cmd">gcloud config set</span> <span class="t-flag">engineer</span> <span class="t-val">santosh.kumar.doodala</span></div>
+      <div class="t-out">Updated property [engineer].</div>
+      <div><span class="t-prompt">$</span> <span class="t-cmd">terraform apply</span> <span class="t-flag">-target=module.landing_zone</span></div>
+      <div class="t-out">Apply complete! 25+ apps · 100+ environments provisioned.</div>
+      <div><span class="t-prompt">$</span> <span class="t-cmd">checkov</span> <span class="t-flag">--framework</span> <span class="t-val">terraform</span> <span class="t-flag">--config-file</span> <span class="t-val">.checkov.yaml</span></div>
+      <div class="t-success">Passed checks: 312, Failed checks: 0 — pre-commit policies enforced ✓</div>
+    </div>
+  </div>
+</div>
+ 
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">WORK HISTORY</div>
+  <h2 class="section-title">Experience</h2>
+  <div class="timeline">
+ 
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-period">Jan 2025 — Present</div>
+        <div class="timeline-company">Rappit</div>
+      </div>
+      <div>
+        <div class="timeline-role">Cloud Engineer I</div>
+        <ul class="timeline-bullets">
+          <li>Developed automation scripts to sync YAML configuration updates across repositories, extract critical GCP project details, and streamline repetitive operational tasks — increasing workflow efficiency across environments.</li>
+          <li>Implemented custom Checkov policies integrated via pre-commit hooks, catching infrastructure misconfigurations before CI/CD pipelines — reducing Cloud Build costs.</li>
+          <li>Optimised Google Cloud Build pipelines within the central IaC framework for improved Checkov validation performance across org-wide GCP project deployments.</li>
+          <li>Managed and provisioned GCP infrastructure via Terraform, ensuring SLA compliance and smooth production go-lives.</li>
+          <li>Maintained SOC 2 compliant infrastructure and executed periodic compliance controls supporting audit evidence collection.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">GCP</span><span class="tag">Terraform</span><span class="tag">Checkov</span><span class="tag">Cloud Build</span><span class="tag">Python</span><span class="tag">SOC 2</span><span class="tag">Cloud Custodian</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-period">Jun 2024 — Dec 2024</div>
+        <div class="timeline-company">Rappit</div>
+      </div>
+      <div>
+        <div class="timeline-role">Associate CloudOps Engineer</div>
+        <ul class="timeline-bullets">
+          <li>Designed, provisioned, and maintained GCP Landing Zone infrastructure supporting 25+ applications across 100+ environments.</li>
+          <li>Developed and maintained Low-Level Design (LLD) documentation aligned with continuous infrastructure changes.</li>
+          <li>Provided 24/7 production support on night-shift monitoring using Nagios; responded to incidents within SLA targets.</li>
+          <li>Supported GCP project migration between organizations — LLD documentation, requirement validation, and migration execution.</li>
+          <li>Performed VM patching and maintenance to ensure secure, compliant cloud environments.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">Landing Zone</span><span class="tag">Nagios</span><span class="tag">Terraform</span><span class="tag">GCP Migration</span><span class="tag">VM Patching</span><span class="tag">LLD</span>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="timeline-period">Jan 2024 — May 2024</div>
+        <div class="timeline-company">Rappit</div>
+      </div>
+      <div>
+        <div class="timeline-role">CloudOps Intern</div>
+        <ul class="timeline-bullets">
+          <li>Led PoC for Backup and Disaster Recovery (DR) solutions on GCP — evaluated RTO strategies, centralized vs decentralized management, and cross-region backup approaches.</li>
+          <li>Automated DR validation checks using Ansible to verify database consistency and package availability.</li>
+          <li>Configured Shared VPC and VPC Peering for secure cross-project connectivity during DR testing.</li>
+        </ul>
+        <div class="timeline-tags">
+          <span class="tag">Disaster Recovery</span><span class="tag">Ansible</span><span class="tag">Shared VPC</span><span class="tag">Cloud SQL</span><span class="tag">Compute Engine</span>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<div class="divider"><hr></div>
+ 
+<!-- HIGHLIGHTS -->
+<section id="highlights">
+  <div class="section-label">NOTABLE WORK</div>
+  <h2 class="section-title">Key Highlights</h2>
+  <div class="highlight-grid">
+    <div class="highlight-card">
+      <div class="highlight-number">01 / GOVERNANCE</div>
+      <div class="highlight-title">Custom Checkov Policy Engine</div>
+      <div class="highlight-desc">Designed and implemented a Python-based custom Checkov policy framework integrated through pre-commit hooks, enforcing environment-specific naming conventions and infrastructure validation before code ever reached CI/CD pipelines.</div>
+      <div class="highlight-impact">↑ Reduced pipeline failures · Optimised Cloud Build costs</div>
+    </div>
+    <div class="highlight-card">
+      <div class="highlight-number">02 / SCALE</div>
+      <div class="highlight-title">GCP Landing Zone — 60+ Environments</div>
+      <div class="highlight-desc">Architected and provisioned a GCP Landing Zone supporting 25+ applications across 100+ environments using Terraform. Built the foundational cloud infrastructure that underpins all production and development workloads.</div>
+      <div class="highlight-impact">↑ 15+ apps · 60+ environments · Multi-org migrations</div>
+    </div>
+    <div class="highlight-card">
+      <div class="highlight-number">03 / AUTOMATION</div>
+      <div class="highlight-title">YAML Sync & Ops Automation Suite</div>
+      <div class="highlight-desc">Developed a suite of Python scripts to automate YAML configuration syncing across repositories, extract critical GCP project metadata, and eliminate repetitive operational tasks.</div>
+      <div class="highlight-impact">↑ Reduced manual overhead across all environments</div>
+    </div>
+    <div class="highlight-card">
+      <div class="highlight-number">04 / RESILIENCE</div>
+      <div class="highlight-title">Disaster Recovery PoC on GCP</div>
+      <div class="highlight-desc">Evaluated and documented GCP Backup & DR architectures — comparing RTO approaches, centralized vs decentralized strategies, and cross-region backup mechanisms using Ansible-automated validation.</div>
+      <div class="highlight-impact">↑ Validated recovery procedures with automated checks</div>
+    </div>
+    <div class="highlight-card">
+      <div class="highlight-number">05 / COMPLIANCE</div>
+      <div class="highlight-title">SOC 2 Cloud Infrastructure Compliance</div>
+      <div class="highlight-desc">Maintained SOC 2 compliant GCP infrastructure and executed periodic compliance controls. Supported audit readiness by collecting and organizing evidence, ensuring security, availability, and confidentiality requirements.</div>
+      <div class="highlight-impact">↑ Audit-ready infrastructure · Continuous compliance posture</div>
+    </div>
+    <div class="highlight-card">
+      <div class="highlight-number">06 / OPERATIONS</div>
+      <div class="highlight-title">24/7 Production Monitoring & Incident Response</div>
+      <div class="highlight-desc">Delivered round-the-clock infrastructure monitoring using Nagios during night-shift rotations, triaging and resolving production incidents within SLA windows to maintain high availability across all cloud environments.</div>
+      <div class="highlight-impact">↑ SLA-compliant incident resolution within SLA targets</div>
+    </div>
+  </div>
+</section>
+ 
+<div class="divider"><hr></div>
+ 
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">TECHNICAL STACK</div>
+  <h2 class="section-title">Skills</h2>
+  <div class="skills-grid">
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M21.5 10.5 H10.5 L5 19.5 l5.5 9 H21.5 l5.5-9z" stroke="#FF7B00" stroke-width="1.4" stroke-linejoin="round"/><circle cx="16" cy="19.5" r="3" fill="#FF7B00"/><circle cx="10.5" cy="10.5" r="2" fill="#FF9E40"/><circle cx="21.5" cy="10.5" r="2" fill="#FFB86B"/></svg>
+      </div>
+      <div class="skill-name">Cloud Platforms</div>
+      <div class="skill-items">Google Cloud Platform (GCP)</div>
+    </div>
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M12.5 7 L19.5 11 V19 L12.5 15 V7Z" fill="#FF9E40" fill-opacity="0.15" stroke="#FF9E40" stroke-width="1.2" stroke-linejoin="round"/><path d="M20.5 11.5 L27 15.3 V22.8 L20.5 19 V11.5Z" fill="#FF9E40" fill-opacity="0.3" stroke="#FF9E40" stroke-width="1.2" stroke-linejoin="round"/><path d="M5 11.5 L11.5 15.3 V22.8 L5 19 V11.5Z" fill="#FF9E40" fill-opacity="0.08" stroke="#FF9E40" stroke-width="1.2" stroke-linejoin="round"/><path d="M12.5 20 L19.5 24 V28 L12.5 24 V20Z" fill="#FF9E40" fill-opacity="0.2" stroke="#FF9E40" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="skill-name">Infrastructure as Code</div>
+      <div class="skill-items">Terraform · Ansible · HCL</div>
+    </div>
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><circle cx="8" cy="8" r="3" stroke="#FF7B00" stroke-width="1.3"/><circle cx="8" cy="24" r="3" stroke="#FF7B00" stroke-width="1.3"/><circle cx="24" cy="16" r="3" stroke="#FF7B00" stroke-width="1.3"/><path d="M8 11 V21" stroke="#FF7B00" stroke-width="1.2"/><path d="M8 8 Q14 8 21 16" stroke="#FF7B00" stroke-width="1.2" stroke-linecap="round"/><path d="M8 24 Q14 24 21 16" stroke="#FF7B00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="skill-name">CI/CD & DevOps Tools</div>
+      <div class="skill-items">Google Cloud Build · GitLab<br>GitHub · Git<br>Cloud Source Repositories</div>
+    </div>
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><rect x="4" y="14" width="24" height="10" rx="3" fill="#FF9E40" fill-opacity="0.1" stroke="#FF9E40" stroke-width="1.2"/><rect x="7" y="10" width="4" height="4" rx="1" fill="#FF9E40" fill-opacity="0.3" stroke="#FF9E40" stroke-width="1"/><rect x="13" y="10" width="4" height="4" rx="1" fill="#FF9E40" fill-opacity="0.3" stroke="#FF9E40" stroke-width="1"/><rect x="19" y="10" width="4" height="4" rx="1" fill="#FF9E40" fill-opacity="0.3" stroke="#FF9E40" stroke-width="1"/><rect x="13" y="6" width="4" height="4" rx="1" fill="#FF9E40" fill-opacity="0.15" stroke="#FF9E40" stroke-width="1"/></svg>
+      </div>
+      <div class="skill-name">Containers & Orchestration</div>
+      <div class="skill-items">Docker · GKE</div>
+    </div>
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16 4 C11 4 9 6.5 9 9.5 V13 H16 V14 H6 C3.5 14 2 16 2 19 C2 22 3.5 24 6 24 H8 V20.5 C8 17.5 10 16 13 16 H19 C22 16 23 14.5 23 12 V9.5 C23 6.5 21 4 16 4Z" fill="#FF7B00" fill-opacity="0.18" stroke="#FF7B00" stroke-width="1.1"/><path d="M16 28 C21 28 23 25.5 23 22.5 V19 H16 V18 H26 C28.5 18 30 16 30 13 C30 10 28.5 8 26 8 H24 V11.5 C24 14.5 22 16 19 16 H13 C10 16 9 17.5 9 20 V22.5 C9 25.5 11 28 16 28Z" fill="#FFB86B" fill-opacity="0.18" stroke="#FFB86B" stroke-width="1.1"/></svg>
+      </div>
+      <div class="skill-name">Programming & Scripting</div>
+      <div class="skill-items">Python · Bash / Shell</div>
+    </div>
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><polyline points="3,22 9,14 13,18 18,10 23,16 29,8" stroke="#FF9E40" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="24" width="26" height="2" rx="1" fill="#FF9E40" fill-opacity="0.2"/><circle cx="9" cy="14" r="1.5" fill="#FF9E40"/><circle cx="18" cy="10" r="1.5" fill="#FF9E40"/></svg>
+      </div>
+      <div class="skill-name">Monitoring & Operations</div>
+      <div class="skill-items">GCP Cloud Operations Suite<br>(Logging & Monitoring)<br>Nagios · Linux</div>
+    </div>
+ 
+    <div class="skill-card">
+      <div class="skill-icon">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16 3 L28 8 V17 C28 23 22 28 16 29 C10 28 4 23 4 17 V8 L16 3Z" fill="#FF7B00" fill-opacity="0.1" stroke="#FF7B00" stroke-width="1.3" stroke-linejoin="round"/><path d="M11 16 l3.5 3.5 6.5-7" stroke="#FF7B00" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="skill-name">Cloud Security & Governance</div>
+      <div class="skill-items">Checkov · Cloud Custodian<br>GCP Cloud Armor<br>SOC 2 Compliance Controls</div>
+    </div>
+ 
+  </div>
+</section>
+ 
+<div class="divider"><hr></div>
+ 
+<!-- CERTIFICATIONS -->
+<section id="certifications">
+  <div class="section-label">CREDENTIALS</div>
+  <h2 class="section-title">Certifications</h2>
+  <div class="certs-grid">
+    <div class="cert-card">
+      <svg class="cert-logo" viewBox="0 0 48 48" fill="none"><path d="M24 4 L44 16 V32 L24 44 L4 32 V16 Z" fill="#2B2622" stroke="#FF7B00" stroke-width="1.5"/><path d="M15 24 l6 6 12-12" stroke="#FF7B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="cert-title">Professional Cloud Architect</div>
+      <div class="cert-issuer">GOOGLE CLOUD</div>
+    </div>
+    <div class="cert-card">
+      <svg class="cert-logo" viewBox="0 0 48 48" fill="none"><path d="M24 4 L44 16 V32 L24 44 L4 32 V16 Z" fill="#2B2622" stroke="#FF9E40" stroke-width="1.5"/><path d="M15 24 l6 6 12-12" stroke="#FF9E40" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="cert-title">Professional Cloud DevOps Engineer</div>
+      <div class="cert-issuer">GOOGLE CLOUD</div>
+    </div>
+    <div class="cert-card">
+      <svg class="cert-logo" viewBox="0 0 48 48" fill="none"><path d="M24 4 L44 16 V32 L24 44 L4 32 V16 Z" fill="#2B2622" stroke="#FFB86B" stroke-width="1.5"/><path d="M15 24 l6 6 12-12" stroke="#FFB86B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="cert-title">Associate Cloud Engineer</div>
+      <div class="cert-issuer">GOOGLE CLOUD</div>
+    </div>
+    <div class="cert-card">
+      <svg class="cert-logo" viewBox="0 0 48 48" fill="none"><path d="M24 4 L44 16 V32 L24 44 L4 32 V16 Z" fill="#2B2622" stroke="#FF7B00" stroke-width="1.5" stroke-dasharray="4,2"/><path d="M15 24 l6 6 12-12" stroke="#FF7B00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="cert-title">Cloud Digital Leader</div>
+      <div class="cert-issuer">GOOGLE CLOUD</div>
+    </div>
+  </div>
+ 
+  <div style="margin-top:3rem;padding:2rem;background:var(--card);border:1px solid var(--border);border-radius:4px;" class="reveal">
+    <div class="section-label" style="margin-bottom:1rem;">EDUCATION</div>
+    <div>
+      <div style="font-size:1rem;font-weight:600;color:var(--text);margin-bottom:0.25rem;">B.Tech, Computer Science</div>
+      <div style="font-family:var(--mono);font-size:0.78rem;color:var(--muted);">SASTRA University, Thanjavur · 2020–2024</div>
+      <div style="font-family:var(--mono);font-size:0.75rem;color:var(--accent);margin-top:0.3rem;">CGPA: 8.38 / 10</div>
+    </div>
+  </div>
+</section>
+ 
+<div class="divider"><hr></div>
+ 
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">GET IN TOUCH</div>
+  <h2 class="section-title">Contact</h2>
+  <div class="contact-grid">
+    <a href="mailto:santoshkumardoodala@gmail.com" class="contact-item">
+      <div class="contact-label">EMAIL</div>
+      <div class="contact-value">santoshkumardoodala@gmail.com</div>
+    </a>
+    <a href="https://linkedin.com/in/santosh-kumar-doodala" target="_blank" class="contact-item">
+      <div class="contact-label">LINKEDIN</div>
+      <div class="contact-value">linkedin.com/in/santosh-kumar-doodala</div>
+    </a>
+    <a href="https://github.com/santoshkumardoodala" target="_blank" class="contact-item">
+      <div class="contact-label">GITHUB</div>
+      <div class="contact-value">github.com/santoshkumardoodala</div>
+    </a>
+  </div>
+</section>
+ 
+<footer>
+  <div class="footer-text">© 2025 Santosh Kumar Doodala · CloudOps Engineer</div>
+  <div class="footer-gcp">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#FF7B00" stroke-width="1"/><path d="M4 7 l2 2 4-4" stroke="#FF9E40" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Hosted on Google Cloud · yeskaydee.space
+  </div>
+</footer>
+ 
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    cursor.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+    ring.style.transform = `translate(${rx - 16}px, ${ry - 16}px)`;
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+ 
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 60);
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+ 
+  document.querySelectorAll('.timeline-item, .skill-card, .highlight-card, .cert-card, .contact-item, .reveal')
+    .forEach(el => observer.observe(el));
+ 
+  document.querySelectorAll('.skills-grid .skill-card').forEach((el, i) => el.style.transitionDelay = `${i * 0.05}s`);
+  document.querySelectorAll('.highlight-grid .highlight-card').forEach((el, i) => el.style.transitionDelay = `${i * 0.06}s`);
+  document.querySelectorAll('.certs-grid .cert-card').forEach((el, i) => el.style.transitionDelay = `${i * 0.07}s`);
+</script>
 </body>
 </html>
+ 
